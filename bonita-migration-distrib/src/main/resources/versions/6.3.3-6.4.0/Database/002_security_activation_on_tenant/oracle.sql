@@ -1,1 +1,1 @@
-ALTER TABLE tenant ADD isSecurityActivated NUMBER(1) DEFAULT 0 NOT NULL @@
+ALTER TABLE tenant ADD securityActivated NUMBER(1) DEFAULT 0 NOT NULL @@

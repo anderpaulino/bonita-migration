@@ -1,1 +1,1 @@
-ALTER TABLE tenant ADD isSecurityActivated BOOLEAN NOT NULL DEFAULT 0;
+ALTER TABLE tenant ADD securityActivated BOOLEAN NOT NULL DEFAULT 0;

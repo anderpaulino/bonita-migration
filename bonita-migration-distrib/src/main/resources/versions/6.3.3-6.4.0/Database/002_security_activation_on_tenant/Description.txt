@@ -1,1 +1,1 @@
-Add new column isSecurityActivated on tenant table
+Add new column securityActivated on tenant table

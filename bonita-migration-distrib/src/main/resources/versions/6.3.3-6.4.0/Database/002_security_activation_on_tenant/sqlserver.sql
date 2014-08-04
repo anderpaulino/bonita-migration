@@ -1,2 +1,2 @@
-ALTER TABLE tenant ADD isSecurityActivated BIT NOT NULL DEFAULT 'False'
+ALTER TABLE tenant ADD securityActivated BIT NOT NULL DEFAULT 'False'
 @@
