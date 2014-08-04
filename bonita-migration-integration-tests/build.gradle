@@ -13,8 +13,8 @@ targetCompatibility = 1.6
 
 
 ext{
-    sourceversion = System.getProperty("source.version","6.3.2")
-    targetversion = System.getProperty("target.version","6.3.3")
+    sourceversion = System.getProperty("source.version","6.3.3")
+    targetversion = System.getProperty("target.version","6.4.0")
     dbvendor = System.getProperty("db.vendor", "postgres")
     dburl = System.getProperty("db.url","jdbc:postgresql://localhost:5432/migration");
     dbuser=System.getProperty("db.user","bonita")
@@ -24,8 +24,8 @@ ext{
     distDir="${buildDir.path}/dist"
     //used for oracle: creates table not the same way
     //used for postgres: give a user able to drop and create databases
-    dbRootUser = System.getProperty("db.root.user","bonita")
-    dbRootPassword = System.getProperty("db.root.password","bpm")
+    dbRootUser = System.getProperty("db.root.user","postgres")
+    dbRootPassword = System.getProperty("db.root.password","postgres")
 
     //for postgres
     databaseName = "migration"
@@ -64,7 +64,7 @@ repositories {
 dependencies {
     sourcefiller "${group}:bonita-migration-db-filler-${sourceversion}:${version}"
     scriptsintegration "${group}:bonita-migration-scripts-integration-tests:${version}"
-    homezip  group: 'org.bonitasoft.engine', name: 'bonita-home', version: sourceversion, ext: 'zip'
+    homezip  group: 'org.bonitasoft.engine', name: 'bonita-home', version: sourceversion + "-SNAPSHOT", ext: 'zip'
     testCompile "${group}:bonita-migration-db-filler-${targetversion}:${version}"
     testCompile group: 'ch.qos.logback', name:'logback-classic', version: '1.0.11'
     migrationdist group: group, name: "bonita-migration-distrib", version: "${version}", ext: 'zip'
@@ -175,8 +175,8 @@ task unpackdist(dependsOn:unpackhome, type: Copy){
     into outputDir
 }
 task copyDrivers(dependsOn:unpackdist, type: Copy){
-    into "$distDir/lib"
     from configurations.drivers
+    into "$distDir/lib"
 }
 
 task changeproperties(dependsOn:copyDrivers)<<{
