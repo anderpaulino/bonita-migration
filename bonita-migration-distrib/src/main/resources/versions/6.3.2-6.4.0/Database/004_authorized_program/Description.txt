@@ -1,0 +1,2 @@
+create new table authorized_program
+add entry in sequence table
