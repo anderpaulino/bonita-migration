@@ -4,7 +4,6 @@ CREATE TABLE authorized_program (
   programName VARCHAR2(255) NOT NULL,
   programSecurityToken VARCHAR2(512) NOT NULL,
   creationDate TIMESTAMP NOT NULL,
-  updateDate TIMESTAMP NOT NULL,
   UNIQUE (tenantId, programName),
   PRIMARY KEY (tenantId, id)
 ) @@
