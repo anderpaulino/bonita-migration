@@ -11,14 +11,21 @@
  * program; if not, write to the Free Software Foundation, Inc., 51 Franklin Street, Fifth
  * Floor, Boston, MA 02110-1301, USA.
  **/
-package org.bonitasoft.migration;
+package org.bonitasoft.migration.versions.v6_3_x_to_6_4_0
+
+import groovy.sql.Sql
+
+import org.bonitasoft.migration.core.MigrationUtil
 
 
-public class DatabaseFiller6_3_4 extends SimpleDatabaseFiller6_3_1 {
+/**
+ * @author Elias Ricken de Medeiros
+ *
+ */
+class CreateApplicationTables {
 
-    public static void main(final String[] args) throws Exception {
-        final DatabaseFiller6_3_4 databaseFiller = new DatabaseFiller6_3_4();
-        databaseFiller.execute(1, 1, 1, 1);
+    public migrate(File feature, String dbVendor, Sql sql) {
+        def parameters = [:]
+        MigrationUtil.executeSqlFile(feature, dbVendor, "update", parameters, sql, false)
     }
-    
 }
