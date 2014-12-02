@@ -1,22 +1,26 @@
 import groovy.sql.Sql
 
+subprojects {
+
 apply plugin: 'java'
 apply plugin: 'eclipse'
 apply plugin: 'maven'
 
 group = 'org.bonitasoft.migration'
-version = '1.15.0-SNAPSHOT'
+version = '2.0.0-SNAPSHOT'
 
 sourceCompatibility = 1.6
 targetCompatibility = 1.6
 
 
 
+
 ext{
     migrationDistribClasses='../bonita-migration-distrib/target/classes'
     migrationScriptsClasses='../bonita-migration-scripts-integration-tests/target/classes'
-    sourceversion = System.getProperty("source.version","6.3.8")
-    targetversion = System.getProperty("target.version","6.4.0")
+    def split = project.name.split("@")[1].split("-")
+    sourceversion = split[0]
+    targetversion = split[1]
     dbvendor = System.getProperty("db.vendor", "postgres")
     dburl = System.getProperty("db.url","jdbc:postgresql://localhost:5432/migration");
     dbuser=System.getProperty("db.user","bonita")
@@ -273,7 +277,18 @@ task runmigration(dependsOn:execfill, type:JavaExec){
     systemProperty 'auto.accept', 'true'
 }
 
-test.dependsOn(runmigration)
+task postmigrationtests(dependsOn:runmigration, type:JavaExec) {
+    doFirst {
+        println "run post-migration integration tests scripts"
+        systemProperties(["bonita.home":bonitahome,
+                          "target.version":targetversion])
+        println systemProperties
+        main = "org.bonitasoft.migration.postmigration.PostMigrationTest"
+    }
+    classpath configurations.scriptsintegration
+}
+
+test.dependsOn(postmigrationtests)
 test {
     doFirst {
         println "execute test of the database using classpath of $targetversion"
@@ -295,4 +310,4 @@ test {
     testLogging.showStandardStreams = true
 }
 
-
+}
