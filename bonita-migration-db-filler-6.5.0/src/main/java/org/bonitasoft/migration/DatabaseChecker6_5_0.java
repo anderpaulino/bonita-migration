@@ -15,18 +15,43 @@ package org.bonitasoft.migration;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertThat;
 
+import java.io.File;
+import java.io.Serializable;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 
-import org.assertj.core.api.Assertions;
+import org.apache.commons.io.FileUtils;
 import org.bonitasoft.engine.api.IdentityAPI;
+import org.bonitasoft.engine.api.TenantAPIAccessor;
+import org.bonitasoft.engine.api.TenantAdministrationAPI;
+import org.bonitasoft.engine.bdm.BusinessObjectModelConverter;
+import org.bonitasoft.engine.bdm.model.BusinessObject;
+import org.bonitasoft.engine.bdm.model.BusinessObjectModel;
+import org.bonitasoft.engine.bdm.model.Query;
+import org.bonitasoft.engine.bdm.model.field.FieldType;
+import org.bonitasoft.engine.bdm.model.field.RelationField;
+import org.bonitasoft.engine.bdm.model.field.SimpleField;
+import org.bonitasoft.engine.api.ProcessAPI;
+import org.bonitasoft.engine.bpm.flownode.FlowNodeInstance;
+import org.bonitasoft.engine.bpm.flownode.FlowNodeInstanceSearchDescriptor;
 import org.bonitasoft.engine.bpm.flownode.HumanTaskInstance;
 import org.bonitasoft.engine.bpm.process.ProcessDefinition;
+import org.bonitasoft.engine.bpm.process.ProcessInstance;
 import org.bonitasoft.engine.bpm.process.impl.ProcessDefinitionBuilder;
+import org.bonitasoft.engine.expression.Expression;
 import org.bonitasoft.engine.expression.ExpressionBuilder;
+import org.bonitasoft.engine.expression.ExpressionEvaluationException;
+import org.bonitasoft.engine.expression.InvalidExpressionException;
 import org.bonitasoft.engine.identity.User;
 import org.bonitasoft.engine.identity.UserNotFoundException;
+import org.bonitasoft.engine.io.IOUtil;
+import org.bonitasoft.engine.operation.OperationBuilder;
+import org.bonitasoft.engine.test.APITestUtil;
+import org.bonitasoft.engine.search.SearchOptionsBuilder;
+import org.bonitasoft.engine.search.SearchResult;
 import org.bonitasoft.engine.test.BuildTestUtil;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
@@ -45,7 +70,7 @@ public class DatabaseChecker6_5_0 extends SimpleDatabaseChecker6_5_0 {
     }
 
     @Test
-    public void can_creatte_FlowNodeInstance_with_several_non_ascii_characters() throws Exception {
+    public void can_create_FlowNodeInstance_with_several_non_ascii_characters() throws Exception {
         final User user = getApiTestUtil().createUser("tom", "bpm");
 
         final String taskDisplayName = "Žingsnis, kuriame paraiškos teikėjas gali laisvai užpildyti duomenis, ąčęė";
@@ -76,5 +101,16 @@ public class DatabaseChecker6_5_0 extends SimpleDatabaseChecker6_5_0 {
         assertThat(userWithoutLoginDate.getLastConnection()).isNull();
 
     }
+
+    @Test
+    public void should_deleted_exists_anymore() throws Exception {
+        final ProcessAPI processAPI = getApiTestUtil().getProcessAPI();
+        final long processId = processAPI.getProcessDefinitionId("SimpleProcessWithDeleted", "1.0");
+        final SearchResult<FlowNodeInstance> flowNodeInstanceSearchResult = processAPI.searchFlowNodeInstances(new SearchOptionsBuilder(0, 10).filter(FlowNodeInstanceSearchDescriptor.PROCESS_DEFINITION_ID, processId).done());
+        assertThat(flowNodeInstanceSearchResult.getCount()).isEqualTo(1);
+        assertThat(flowNodeInstanceSearchResult.getResult().get(0).getName()).isEqualTo("human");
+    }
+
+
 
 }
