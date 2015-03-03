@@ -45,6 +45,7 @@ import org.bonitasoft.engine.operation.OperationBuilder;
 import org.bonitasoft.engine.test.APITestUtil;
 import org.dom4j.Document;
 import org.dom4j.io.SAXReader;
+import org.junit.Test;
 import org.junit.runner.JUnitCore;
 
 public class DatabaseChecker7_0_0 extends SimpleDatabaseChecker7_0_0 {
@@ -92,7 +93,7 @@ public class DatabaseChecker7_0_0 extends SimpleDatabaseChecker7_0_0 {
 
     private TenantAdministrationAPI tenantAdministrationAPI;
 
-//    @Test
+    @Test
     public void should_deploy_a_business_data_model() throws Exception {
         // before
         setUp_BDM();
